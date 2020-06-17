@@ -1,25 +1,14 @@
 var express = require('express');
 var router = express.Router();
+const {
+  getRecipes,
+  getRecipe,
+  createRecipe,
+  deleteRecipe,
+  updateRecipe,
+} = require('../controllers/recipes');
 
-/* GET recipes listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
-/* GET one recipe listing. */
-router.get('/:id', function (req, res, next) {
-  res.send(`get recipe id ${req.params.id}`);
-});
-/* POST recipe listing. */
-router.post('/', function (req, res, next) {
-  res.send('posting');
-});
-/* DELETE recipe listing. */
-router.delete('/:id', function (req, res, next) {
-  res.send(`delete recipe id ${req.params.id}`);
-});
-/* UPDATE recipes listing. */
-router.put('/:id', function (req, res, next) {
-  res.send(`update recipe id ${req.params.id}`);
-});
+router.route('/').get(getRecipes).post(createRecipe);
+router.route('/:id').get(getRecipe).delete(deleteRecipe).put(updateRecipe);
 
 module.exports = router;
