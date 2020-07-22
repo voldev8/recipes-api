@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const { NotExtended } = require('http-errors');
 
 const RecipesSchema = new mongoose.Schema({
   name: {
@@ -15,18 +14,21 @@ const RecipesSchema = new mongoose.Schema({
     required: [true, 'Please add an ingredient'],
     maxlength: [500, 'Ingredient can not be more than 50 characters'],
   },
-  directions: {
+  instructions: {
     type: [String],
   },
   tags: {
     type: [String],
   },
-  photo: {
+  image: {
     type: String,
-    default: 'no-photo.jpg',
+    default:
+      'https://media.istockphoto.com/vectors/smiling-chef-face-vector-id533998629?k=6&m=533998629&s=612x612&w=0&h=vnud6hVo61ORPVmLuoPOFFMHTdAyM1YorfgINRLnurY=',
+    // '/public/images/no-photo-jpg',
   },
   link: {
     type: String,
+    default: '/no-link',
   },
   createdAt: {
     type: Date,

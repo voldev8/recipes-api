@@ -6,7 +6,7 @@ exports.getRecipes = asyncHandler(async (req, res, next) => {
   const recipes = await Recipe.find();
 
   if (!recipes) res.json({ success: false });
-  res.status(200).json({ success: true, count: recipes.length, data: recipes });
+  res.status(200).json(recipes);
 });
 /* GET one recipe listing. */
 exports.getRecipe = asyncHandler(async (req, res, next) => {

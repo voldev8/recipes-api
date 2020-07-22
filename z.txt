@@ -1,1 +1,7 @@
 dotenv installed - in order to reach .env file
+in data folder recipes.json created as an example database
+Recipes models created
+recipes controllers and route configured
+Mongodb database connection with mongoose
+Postman for CRUD tests
+async middleware so we don't have to add try catch for each recipes controller
