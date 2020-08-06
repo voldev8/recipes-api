@@ -1,8 +1,12 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
+const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
+const saveCookie = require('../middleware/token');
+const AppError = require('../middleware/appError');
+
 const User = require('../models/User');
 
 // Register a user
@@ -16,7 +20,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 
   let user = await User.findOne({ email });
   if (user) {
-    return res.status(400).json({ msg: 'User already exists' });
+    return next(new AppError('User already exists.', 400));
   }
   //if user doesn't exist create one
   user = new User({
@@ -34,62 +38,104 @@ exports.register = asyncHandler(async (req, res, next) => {
   saveCookie(user, res);
 });
 
-// Auth user & get token
-exports.login = asyncHandler(async (req, res) => {
+// login user
+exports.login = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(res.status(400).json({ errors: errors.array() }));
+    return res.status(400).json({ errors: errors.array() });
   }
 
   const { name, password } = req.body;
 
   let user = await User.findOne({ name });
   if (!user) {
-    return next(res.status(400).json({ msg: 'Invalid Credentials' }));
+    return next(new AppError('Invalid Credentials', 400));
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return next(res.status(400).json({ msg: 'Invalid Credentials' }));
+    return next(new AppError('Invalid Credentials', 400));
   }
 
   saveCookie(user, res);
 });
 
-// helper function to save cookies
-const saveCookie = (user, res) => {
-  //object we want to send in token
-  const payload = {
-    user: {
-      id: user.id,
-    },
-  };
-  if (!payload) return res.status(500).send('Something went wrong');
+// Log user out / clear cookie
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
 
-  jwt.sign(
-    payload,
-    process.env.JWT_SECRET,
-    {
-      expiresIn: '30 days',
-    },
-    (err, token) => {
-      if (err) throw err;
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
 
-      const options = {
-        expires: new Date(
-          Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-        ),
-        httpOnly: true,
-      };
+// Forgot password
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
 
-      if (process.env.NODE_ENV === 'production') {
-        options.secure = true;
-      }
+  if (!user) {
+    return res.status(400).json({ msg: 'There is no user with that email' });
+  }
 
-      res
-        .status(200)
-        .cookie('token', token, options)
-        .json({ success: true, token });
-    }
-  );
-};
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+  // Create reset url
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/auth/resetpassword/${resetToken}`;
+
+  const message = `You are receiving this email because you (or someone else) has requested the reset of a password. 
+  In order to reset your password, please visit this link: \n\n ${resetUrl}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset token',
+      message,
+    });
+
+    res.status(200).json({ success: true, data: 'Email sent' });
+  } catch (err) {
+    console.log(err);
+    user.getResetPasswordToken = undefined;
+    user.getResetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(500).json({ msg: 'Email could not be sent' });
+  }
+});
+
+// Reset password
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).send('Invalid token');
+  }
+
+  // Set new password
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(req.body.password, salt);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  saveCookie(user, res);
+});

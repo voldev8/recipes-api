@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.2.2",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.1",
     "cookie-parser": "~1.4.4",
@@ -18,6 +19,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.19",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.4.11",
     "slugify": "^1.4.0"
   }
 }
