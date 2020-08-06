@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const connectDB = require('./db');
 const dotenv = require('dotenv');
+const errorHandler = require('./middleware/error');
 
 //load env variables
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/recipes', recipesRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 
+app.use(errorHandler);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

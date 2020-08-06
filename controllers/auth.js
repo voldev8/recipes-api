@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
 const saveCookie = require('../middleware/token');
-const AppError = require('../middleware/appError');
+const AppError = require('../utils/appError');
 
 const User = require('../models/User');
 
@@ -62,10 +62,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 // Log user out / clear cookie
 exports.logout = asyncHandler(async (req, res, next) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
+  res.clearCookie('token');
 
   res.status(200).json({
     success: true,

@@ -1,21 +1,21 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const asyncHandler = require('./async');
-const AppError = require('./appError');
+const AppError = require('../utils/appError');
 
 module.exports = asyncHandler(async (req, res, next) => {
   let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    // Set token from Bearer token in header
-    token = req.headers.authorization.split(' ')[1];
-  }
-  // Set token from cookie
-  else if (req.cookies.token) {
-    token = req.cookies.token;
-  }
+  // if (
+  //   req.headers.authorization &&
+  //   req.headers.authorization.startsWith('Bearer')
+  // ) {
+  //   // Set token from Bearer token in header
+  //   token = req.headers.authorization.split(' ')[1];
+  // }
+  // // Set token from cookie
+  // else if (req.cookies.token) {
+  token = req.cookies.token;
+  // }
 
   if (!token) {
     return next(new AppError('Not authorized', 401));
