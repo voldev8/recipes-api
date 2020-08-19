@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
 const {
-  register,
+  signup,
   login,
   logout,
   forgotPassword,
   resetPassword,
 } = require('../controllers/auth');
 
-router.route('/register').post(
+router.route('/signup').post(
   //express-validator checks
   [
     check('name', 'Name is required').not().isEmpty(),
@@ -19,7 +19,7 @@ router.route('/register').post(
       'Please enter a password with 6 or more characters'
     ).isLength({ min: 6 }),
   ],
-  register
+  signup
 );
 
 router

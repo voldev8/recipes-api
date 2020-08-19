@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('../middleware/async');
 const saveCookie = require('../middleware/token');
+// const AppError = require('../utils/appError');
 const User = require('../models/User');
 
 // Get logged in user
@@ -44,4 +45,38 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
     data: user,
   });
   // saveCookie(user, res);
+});
+
+// add to Favorites
+exports.addFav = asyncHandler(async (req, res, next) => {
+  // const update = { favRecipes: req.body.recipeId };
+
+  // let user = await User.findOneAndUpdate(req.user.id, update, {
+  //   new: true,
+  // });
+  const user = await User.findById(req.user.id);
+  if (!user.favRecipes.includes(req.body.recipeId)) {
+    user.favRecipes.push(req.body.recipeId);
+  }
+  await user.save();
+  res.status(200).json({ success: true, data: user });
+});
+// add to Favorites
+exports.removeFav = asyncHandler(async (req, res, next) => {
+  // const update = { favRecipes: req.body.recipeId };
+
+  // let user = await User.findOneAndUpdate(req.user.id, update, {
+  //   new: true,
+  // });
+  const user = await User.findById(req.user.id);
+  if (user.favRecipes.includes(req.body.recipeId)) {
+    user.favRecipes.splice(user.favRecipes.indexOf(req.body.recipeId), 1);
+  }
+  await user.save();
+  res.status(200).json({ success: true, data: user });
+});
+// get Favorites
+exports.getFav = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('-password'); // we don't return the password
+  res.status(200).json({ success: true, data: user.favRecipes });
 });

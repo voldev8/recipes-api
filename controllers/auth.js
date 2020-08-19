@@ -2,15 +2,14 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
 const saveCookie = require('../middleware/token');
+const sendEmail = require('../utils/sendEmail');
 const AppError = require('../utils/appError');
-
 const User = require('../models/User');
 
 // Register a user
-exports.register = asyncHandler(async (req, res, next) => {
+exports.signup = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -75,7 +74,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
   if (!user) {
-    return res.status(400).json({ msg: 'There is no user with that email' });
+    return next(new AppError('There is no user with that email.', 400));
   }
 
   // Get reset token
@@ -104,8 +103,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     user.getResetPasswordExpire = undefined;
 
     await user.save({ validateBeforeSave: false });
-
-    return res.status(500).json({ msg: 'Email could not be sent' });
+    return next(new AppError('Email could not be sent.', 500));
   }
 });
 
@@ -123,7 +121,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(400).send('Invalid token');
+    return next(new AppError('Invalid token.', 400));
   }
 
   // Set new password

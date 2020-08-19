@@ -5,3 +5,5 @@ recipes controllers and route configured
 Mongodb database connection with mongoose
 Postman for CRUD tests
 async middleware so we don't have to add try catch for each recipes controller
+error middleware and class for more organised error handling
+auth controller login, register, cookies, reset password with sendgrid api

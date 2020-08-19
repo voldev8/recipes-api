@@ -23,6 +23,7 @@ const UserSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  favRecipes: [{ type: String }],
 });
 
 // Generate and hash password token
