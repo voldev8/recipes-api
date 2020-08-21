@@ -47,13 +47,15 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   // saveCookie(user, res);
 });
 
-// add to Favorites
-exports.addFav = asyncHandler(async (req, res, next) => {
-  // const update = { favRecipes: req.body.recipeId };
+// Favorites
+// Get Favorites
+exports.getFav = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('-password'); // we don't return the password
+  res.status(200).json({ success: true, data: user.favRecipes });
+});
 
-  // let user = await User.findOneAndUpdate(req.user.id, update, {
-  //   new: true,
-  // });
+// Add recipe to Favorites
+exports.addFav = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   if (!user.favRecipes.includes(req.body.recipeId)) {
     user.favRecipes.push(req.body.recipeId);
@@ -61,22 +63,13 @@ exports.addFav = asyncHandler(async (req, res, next) => {
   await user.save();
   res.status(200).json({ success: true, data: user });
 });
-// add to Favorites
-exports.removeFav = asyncHandler(async (req, res, next) => {
-  // const update = { favRecipes: req.body.recipeId };
 
-  // let user = await User.findOneAndUpdate(req.user.id, update, {
-  //   new: true,
-  // });
+// Remove recipe from Favorites
+exports.removeFav = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   if (user.favRecipes.includes(req.body.recipeId)) {
     user.favRecipes.splice(user.favRecipes.indexOf(req.body.recipeId), 1);
   }
   await user.save();
   res.status(200).json({ success: true, data: user });
-});
-// get Favorites
-exports.getFav = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select('-password'); // we don't return the password
-  res.status(200).json({ success: true, data: user.favRecipes });
 });
