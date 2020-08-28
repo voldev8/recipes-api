@@ -158,17 +158,25 @@ git clone https://github.com/voldev8/recipes-api
 
 ### Requirements
 
-[NodeJs installation](https://nodejs.org/en/)
+> NodeJs installation
+
+[NodeJs](https://nodejs.org/en/)
 
 > Create an .env file in root folder
 
-> environment values need to be filled
+#### Environment Values
+
+> MongoDB
 
 [MongoDB](https://www.mongodb.com/)
 
+MONGO_URI='your mongo uri'
+
+> Choose a port
+
 PORT=
 
-MONGO_URI='your mongo uri'
+> Token Settings
 
 JWT_SECRET='secret for hashing'
 
@@ -202,7 +210,9 @@ $ npm install
 $ npm run start
 ```
 
-This requires nodemon, If not preferred on the package.json file
+This requires nodemon, If not preferred,
+
+on the package.json file
 
 ```javascript
   "scripts": {
