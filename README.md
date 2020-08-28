@@ -8,6 +8,8 @@ This is a basic CRUD API
 
 ### ENDPOINTS and FIELDS
 
+---
+
 #### Recipes
 
 GET '/recipes/'
@@ -31,6 +33,8 @@ PUT '/recipes/:id'
   name, ingredients, instructions, tags, image, link;
 }
 ```
+
+---
 
 #### Users
 
@@ -74,6 +78,8 @@ PUT '/users/updatepassword'
 }
 ```
 
+---
+
 #### Auth
 
 POST '/auth/signup'
@@ -109,6 +115,8 @@ PUT '/auth/resetpassword/:resettoken'
   password;
 }
 ```
+
+---
 
 ## Tech/framework used
 
@@ -150,27 +158,35 @@ git clone https://github.com/voldev8/recipes-api
 
 ### Requirements
 
-Create an .env file in root folder
+[NodeJs installation](https://nodejs.org/en/)
 
-environment values need to be filled
+> Create an .env file in root folder
+
+> environment values need to be filled
 
 [MongoDB](https://www.mongodb.com/)
 
 PORT=
+
 MONGO_URI='your mongo uri'
 
 JWT_SECRET='secret for hashing'
+
 JWT_COOKIE_EXPIRE=
+
 JWT_EXPIRE=
 
-Sendgrid installation and create an account
+> Sendgrid installation and create an account
 
 [SendGrid documentation](https://sendgrid.com/docs/)
 
 SENDGRID_API_KEY=
 
-FROM_EMAIL=noreply@flavorites.io
-FROM_NAME=FlavoritesApp
+> for the email
+
+FROM_EMAIL=
+
+FROM_NAME=
 
 ### Setup
 
@@ -184,6 +200,22 @@ $ npm install
 
 ```shell
 $ npm run start
+```
+
+This requires nodemon, If not preferred on the package.json file
+
+```javascript
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  }
+```
+
+needs to be changed to
+
+```javascript
+  "scripts": {
+    "start": "node ./bin/www"
+  }
 ```
 
 Instead of starting the front end and back end separately, concurrently npm can be used [More info](https://www.npmjs.com/package/concurrently)
