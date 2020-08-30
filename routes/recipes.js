@@ -7,9 +7,12 @@ const {
   createRecipe,
   deleteRecipe,
   updateRecipe,
+  fileUpload,
+  uploadRecipePhoto,
 } = require('../controllers/recipes');
 
 router.route('/').get(getRecipes).post(auth, createRecipe);
 router.route('/:id').get(getRecipe).delete(deleteRecipe).put(updateRecipe);
+router.route('/photo-upload').post(uploadRecipePhoto, fileUpload);
 
 module.exports = router;

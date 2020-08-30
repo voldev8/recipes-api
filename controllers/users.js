@@ -1,7 +1,5 @@
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('../middleware/async');
-const saveCookie = require('../middleware/token');
-// const AppError = require('../utils/appError');
 const User = require('../models/User');
 
 // Get logged in user

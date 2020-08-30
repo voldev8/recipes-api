@@ -4,7 +4,7 @@ This is the back end part of a simple Recipe MERN App.
 
 [Front end part](https://github.com/voldev8/recipes-client)
 
-This is a basic CRUD API
+This is a basic CRUD API. I used [express-generator](https://expressjs.com/en/starter/generator.html) to start with a basic structure, MongoDB Compass for database management,
 
 ### ENDPOINTS and FIELDS
 
@@ -120,6 +120,8 @@ PUT '/auth/resetpassword/:resettoken'
 
 ## Tech/framework used
 
+I used [express-generator](https://expressjs.com/en/starter/generator.html) to start with a basic structure, MongoDB Compass for database management,
+
 MongoDB, Express and NodeJs
 
 "@sendgrid/mail": email service,
@@ -210,23 +212,13 @@ $ npm install
 $ npm run start
 ```
 
-This requires nodemon, If not preferred,
+> for nodemon
 
-on the package.json file
-
-```javascript
-  "scripts": {
-    "start": "nodemon ./bin/www"
-  }
+```shell
+$ npm run dev
 ```
 
-needs to be changed to
-
-```javascript
-  "scripts": {
-    "start": "node ./bin/www"
-  }
-```
+[nodemon](https://www.npmjs.com/package/nodemon)
 
 Instead of starting the front end and back end separately, concurrently npm can be used [More info](https://www.npmjs.com/package/concurrently)
 
